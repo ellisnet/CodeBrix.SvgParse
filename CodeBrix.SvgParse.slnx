@@ -1,0 +1,14 @@
+<Solution>
+  <Folder Name="/Solution Items/">
+    <File Path="AGENT-README.txt" />
+    <File Path="icon-codebrix-128.png" />
+    <File Path="LICENSE" />
+    <File Path="README.md" />
+    <File Path="THIRD-PARTY-NOTICES.txt" />
+  </Folder>
+  <Folder Name="/Tests/">
+    <Project Path="tests/CodeBrix.SvgParse.Tests/CodeBrix.SvgParse.Tests.csproj" />
+  </Folder>
+  <Project Path="src/CodeBrix.SvgParse.Generators/CodeBrix.SvgParse.Generators.csproj" />
+  <Project Path="src/CodeBrix.SvgParse/CodeBrix.SvgParse.csproj" />
+</Solution>

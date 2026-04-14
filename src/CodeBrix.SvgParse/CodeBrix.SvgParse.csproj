@@ -1,0 +1,51 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <AssemblyName>CodeBrix.SvgParse</AssemblyName>
+    <RootNamespace>CodeBrix.SvgParse</RootNamespace>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <PackageId>CodeBrix.SvgParse.MsplLicenseForever</PackageId>
+    <Version>1.0.102</Version>
+    <Product>CodeBrix.SvgParse</Product>
+    <Title>CodeBrix.SvgParse</Title>
+    <Authors>Jeremy Ellis</Authors>
+    <Description>A renderer-agnostic SVG document object model (DOM) library for .NET. Provides comprehensive SVG parsing, element modeling, styling, and serialization capabilities. Supports loading SVG documents from files, streams, strings, and XmlReaders, and provides a rich object model for querying and manipulating SVG elements.</Description>
+    <PackageLicenseExpression>MS-PL</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/ellisnet/CodeBrix.SvgParse</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/ellisnet/CodeBrix.SvgParse</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageIcon>icon-codebrix-128.png</PackageIcon>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <Copyright>Copyright (c) 2026 Jeremy Ellis and contributors</Copyright>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+    <IsPackable>true</IsPackable>
+    <PackageTags>svg;svg-parser;svg-dom;svg-document;vector-graphics;CodeBrix</PackageTags>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\..\icon-codebrix-128.png" Pack="true" PackagePath="" />
+    <None Include="..\..\README.md" Pack="true" PackagePath="" />
+    <None Include="..\..\AGENT-README.txt" Pack="true" PackagePath="" />
+    <None Include="..\..\THIRD-PARTY-NOTICES.txt" Pack="true" PackagePath="" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\svg11.dtd">
+      <LogicalName>Svg.Resources.svg11.dtd</LogicalName>
+    </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="CodeBrix.StyleSheetParse.MitLicenseForever" Version="1.0.102" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\CodeBrix.SvgParse.Generators\CodeBrix.SvgParse.Generators.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+  </ItemGroup>
+
+</Project>
