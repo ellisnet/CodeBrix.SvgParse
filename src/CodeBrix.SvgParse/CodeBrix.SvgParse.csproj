@@ -9,7 +9,7 @@
 
   <PropertyGroup>
     <PackageId>CodeBrix.SvgParse.MsplLicenseForever</PackageId>
-    <Version>1.0.102</Version>
+    <Version>1.0.106</Version>
     <Product>CodeBrix.SvgParse</Product>
     <Title>CodeBrix.SvgParse</Title>
     <Authors>Jeremy Ellis</Authors>
