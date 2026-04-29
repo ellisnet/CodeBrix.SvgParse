@@ -60,9 +60,19 @@ group related types.
     using CodeBrix.SvgParse.Css;              // CSS selector matching helpers
     using CodeBrix.SvgParse.Exceptions;       // SvgException and related types
 
-Note: there is no "CodeBrix.SvgParse.Painting" or "CodeBrix.SvgParse.Primitives"
-namespace - paint servers and primitive value types (SvgColor, SvgPointF, etc.)
-live directly in the base CodeBrix.SvgParse namespace.
+Note: there is no "CodeBrix.SvgParse.Painting" namespace. Paint server types
+(SvgPaintServer, SvgColorServer, SvgGradientServer, SvgLinearGradientServer,
+SvgRadialGradientServer, SvgPatternServer, SvgGradientStop, etc.) live directly
+in the base CodeBrix.SvgParse namespace, even though their source files are
+under the "Painting" folder.
+
+The headline primitive value types (SvgColor, SvgPointF, SvgRectangleF,
+SvgSizeF, SvgUnit, SvgViewBox, SvgPoint, SvgAspectRatio, SvgOrient, and the
+font/text/coordinate enums) also live in the base CodeBrix.SvgParse namespace.
+A small "CodeBrix.SvgParse.Primitives" sub-namespace does exist and contains
+a handful of converter / helper types (for example SvgAspectRatioConverter,
+SvgOrientConverter, SvgColorInterpolation, SvgMarkerUnits) — you generally
+will not need to reference it directly from consumer code.
 
 
 ================================================================================
