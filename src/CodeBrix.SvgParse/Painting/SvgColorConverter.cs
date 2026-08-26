@@ -37,48 +37,9 @@ public class SvgColorConverter : TypeConverter
             // rgb(...) / rgba(...)
             if (color.StartsWith("rgb", StringComparison.InvariantCulture))
             {
-                try
-                {
-                    int start = color.IndexOf("(", StringComparison.InvariantCulture) + 1;
-                    string[] values = color
-                        .Substring(start, color.IndexOf(")", StringComparison.InvariantCulture) - start)
-                        .Split(new char[] { ',', ' ' }, StringSplitOptions.RemoveEmptyEntries);
-
-                    // alpha defaults to 255 but may be present as the 4th value (0-1 float)
-                    int alphaValue = 255;
-                    if (values.Length > 3)
-                    {
-                        var alphastring = values[3];
-                        if (alphastring.StartsWith(".", StringComparison.InvariantCulture))
-                            alphastring = "0" + alphastring;
-
-                        var alphaDecimal = decimal.Parse(alphastring, CultureInfo.InvariantCulture);
-                        alphaValue = alphaDecimal <= 1
-                            ? (int)Math.Round(alphaDecimal * 255)
-                            : (int)Math.Round(alphaDecimal);
-                    }
-
-                    if (values[0].Trim().EndsWith("%", StringComparison.InvariantCulture))
-                    {
-                        return SvgColor.FromArgb(
-                            alphaValue,
-                            (int)Math.Round(255 * float.Parse(values[0].Trim().TrimEnd('%'), NumberStyles.Any, CultureInfo.InvariantCulture) / 100f),
-                            (int)Math.Round(255 * float.Parse(values[1].Trim().TrimEnd('%'), NumberStyles.Any, CultureInfo.InvariantCulture) / 100f),
-                            (int)Math.Round(255 * float.Parse(values[2].Trim().TrimEnd('%'), NumberStyles.Any, CultureInfo.InvariantCulture) / 100f));
-                    }
-                    else
-                    {
-                        return SvgColor.FromArgb(
-                            alphaValue,
-                            int.Parse(values[0], CultureInfo.InvariantCulture),
-                            int.Parse(values[1], CultureInfo.InvariantCulture),
-                            int.Parse(values[2], CultureInfo.InvariantCulture));
-                    }
-                }
-                catch
-                {
-                    throw new SvgException("Color is in an invalid format: '" + color + "'");
-                }
+                if (TryParseRgbFunction(color, out var rgb))
+                    return rgb;
+                throw new SvgException("Color is in an invalid format: '" + color + "'");
             }
             // hsl(...)
             else if (color.StartsWith("hsl", StringComparison.InvariantCulture))
@@ -153,6 +114,102 @@ public class SvgColorConverter : TypeConverter
             if (name != null) return name;
         }
         return c.ToHex();
+    }
+
+    /// <summary>
+    /// Parses the argument list of an <c>rgb()</c> / <c>rgba()</c> function into an
+    /// <see cref="SvgColor"/>.
+    /// </summary>
+    /// <remarks>
+    /// Accepts both the CSS Color Level 3 comma form and the CSS Color Level 4 space form
+    /// (<c>rgb(r g b / a)</c>). Each channel may be a number (0-255, fractions allowed) or a
+    /// percentage; channels may mix the two. The alpha may be a percentage, a 0-1 number, or
+    /// (for tolerance of legacy content) a 0-255 number when it is greater than 1. Every value
+    /// is clamped to its range rather than rejected, as CSS requires. Percentage alpha is what
+    /// LilyPond's SVG backend writes (<c>rgba(0.0000%, 0.0000%, 0.0000%, 100.0000%)</c>), and
+    /// before this parser accepted it every such color threw and fell back to black.
+    /// </remarks>
+    private static bool TryParseRgbFunction(string color, out SvgColor result)
+    {
+        result = default;
+        int open = color.IndexOf('(');
+        int close = color.LastIndexOf(')');
+        if (open < 0 || close < open)
+            return false;
+
+        string[] values = color
+            .Substring(open + 1, close - open - 1)
+            .Split(new char[] { ',', ' ', '/', '\t' }, StringSplitOptions.RemoveEmptyEntries);
+        if (values.Length != 3 && values.Length != 4)
+            return false;
+
+        if (!TryParseChannel(values[0], out int r)
+            || !TryParseChannel(values[1], out int g)
+            || !TryParseChannel(values[2], out int b))
+        {
+            return false;
+        }
+
+        int a = 255;
+        if (values.Length == 4 && !TryParseAlpha(values[3], out a))
+            return false;
+
+        result = SvgColor.FromArgb(a, r, g, b);
+        return true;
+    }
+
+    /// <summary>Parses one rgb() channel: a number on the 0-255 scale or a percentage.</summary>
+    private static bool TryParseChannel(string token, out int channel)
+    {
+        channel = 0;
+        if (token.EndsWith("%", StringComparison.InvariantCulture))
+        {
+            if (!TryParseFloat(token.Substring(0, token.Length - 1), out float percent))
+                return false;
+            channel = ClampByte(255f * percent / 100f);
+            return true;
+        }
+
+        if (!TryParseFloat(token, out float number))
+            return false;
+        channel = ClampByte(number);
+        return true;
+    }
+
+    /// <summary>
+    /// Parses an rgba() alpha: a percentage, a 0-1 number, or a legacy 0-255 number when it
+    /// is greater than 1.
+    /// </summary>
+    private static bool TryParseAlpha(string token, out int alpha)
+    {
+        alpha = 255;
+        if (token.EndsWith("%", StringComparison.InvariantCulture))
+        {
+            if (!TryParseFloat(token.Substring(0, token.Length - 1), out float percent))
+                return false;
+            alpha = ClampByte(255f * percent / 100f);
+            return true;
+        }
+
+        if (!TryParseFloat(token, out float number))
+            return false;
+        alpha = number <= 1f ? ClampByte(number * 255f) : ClampByte(number);
+        return true;
+    }
+
+    private static bool TryParseFloat(string token, out float value)
+    {
+        if (token.StartsWith(".", StringComparison.InvariantCulture))
+            token = "0" + token;
+        else if (token.StartsWith("-.", StringComparison.InvariantCulture))
+            token = "-0" + token.Substring(1);
+        return float.TryParse(token, NumberStyles.Float, CultureInfo.InvariantCulture, out value);
+    }
+
+    private static int ClampByte(float value)
+    {
+        if (float.IsNaN(value)) return 0;
+        return (int)Math.Round(Math.Min(255f, Math.Max(0f, value)));
     }
 
     /// <summary>

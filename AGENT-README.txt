@@ -579,6 +579,23 @@ SvgColorServer : SvgPaintServer
     ToString() returns the W3C name ("red") or hex ("#ff0000"), decided by
     the owning document's EnableEmitNamedColorsOnSerialization flag.
 
+    Color syntax the parser (SvgColorConverter) accepts, for fill, stroke,
+    color, stop-color, flood-color and lighting-color alike:
+      named colors (case-insensitive, British "grey" aliases included)
+      #rgb, #rgba, #rrggbb, #rrggbbaa
+      rgb(r, g, b) / rgba(r, g, b, a)   CSS Color Level 3 comma form
+      rgb(r g b / a)                    CSS Color Level 4 space form
+      hsl(h, s%, l%)
+    In rgb()/rgba() each channel is a 0-255 number (fractions allowed) OR a
+    percentage, and the two may be mixed. The alpha is a percentage, a 0-1
+    number, or - tolerated for legacy content - a 0-255 number when it is
+    greater than 1. Out-of-range values clamp; they never throw. Percentage
+    alpha matters in practice: LilyPond's SVG backend writes every color as
+    rgba(83.5294%, 36.8627%, 0.0000%, 100.0000%), and before 2026-08-25 that
+    form threw inside the converter and the element fell back to opaque
+    black - a silent wrong-color, and for rgba(...0%) an opaque box where a
+    transparent one was asked for.
+
 SvgGradientServer (abstract) : SvgPaintServer
     List<SvgGradientStop> Stops { get; }
     SvgGradientSpreadMethod SpreadMethod         // spreadMethod
