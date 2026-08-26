@@ -9,6 +9,19 @@ Please update your C#/.NET code and projects to the latest LTS version of Micros
 
 CodeBrix.SvgParse is a fork of the code of the open source Svg.Custom project (part of the Svg.Skia projects) - see below for licensing details.
 
+## Installation
+
+```
+dotnet add package CodeBrix.SvgParse.MsplLicenseForever
+```
+
+Note that the NuGet package ID and the namespace are different - there is no package named plain `CodeBrix.SvgParse`:
+
+* NuGet package ID: `CodeBrix.SvgParse.MsplLicenseForever`
+* Assembly and namespace: `CodeBrix.SvgParse` - i.e. `using CodeBrix.SvgParse;`
+
+This package has one NuGet dependency, `CodeBrix.StyleSheetParse.MitLicenseForever`, which NuGet restores automatically and which is used for the CSS styling support. There are no native libraries and no other dependencies. XML documentation (IntelliSense) ships alongside the assembly.
+
 ## CodeBrix.SvgParse supports:
 
 * SVG document loading from files, streams, strings, and XmlReaders
@@ -26,6 +39,8 @@ CodeBrix.SvgParse is a fork of the code of the open source Svg.Custom project (p
 * Security controls for external resource loading
 * Many more...
 
+CodeBrix.SvgParse is a document object model, not a renderer: nothing is drawn. It does not rasterize or export to PNG, JPEG or PDF, play animations, perform hit testing, measure text or load fonts, or compute geometry such as bounding boxes and path flattening. Rendering is the job of a backend built on top of this DOM - `CodeBrix.SkiaSvg` is one such backend.
+
 ## Sample Code
 
 ### Load and Inspect an SVG Document
@@ -40,13 +55,15 @@ Console.WriteLine($"Height: {document.Height}");
 
 foreach (var element in document.Descendants())
 {
-    Console.WriteLine($"Element: {element.ElementName}");
+    // There is no public element.ElementName; identify elements by CLR type.
+    Console.WriteLine($"Element: {element.GetType().Name} id={element.ID}");
 }
 ```
 
 ### Load SVG from a String
 
 ```csharp
+using System.Linq;
 using CodeBrix.SvgParse;
 
 var svg = "<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100'>" +
@@ -71,7 +88,14 @@ if (element is SvgRectangle rect)
 }
 ```
 
-Note that additional sample code and usage examples are available in the `CodeBrix.SvgParse.Tests` project.
+## Documentation
+
+The NuGet package includes `AGENT-README.txt`, a complete API reference and usage guide written for AI coding agents - point your agent at that file when it is writing code against this library.
+
+Additional sample code and usage examples are available in the `CodeBrix.SvgParse.Tests` project:
+https://github.com/ellisnet/CodeBrix.SvgParse/tree/main/tests/CodeBrix.SvgParse.Tests
+
+Note that the test project has `InternalsVisibleTo` access to the library, so some of what it calls (for example `SvgElement.ElementName` and `SvgElement.Attributes`) is internal and is not available to package consumers.
 
 ## License
 
