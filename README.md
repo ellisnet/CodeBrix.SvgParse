@@ -7,8 +7,6 @@ CodeBrix.SvgParse supports applications and assemblies that target Microsoft .NE
 Microsoft .NET version 10.0 is a Long-Term Supported (LTS) version of .NET, and was released on Nov 11, 2025; and will be actively supported by Microsoft until Nov 14, 2028.
 Please update your C#/.NET code and projects to the latest LTS version of Microsoft .NET.
 
-CodeBrix.SvgParse is a fork of the code of the open source Svg.Custom project (part of the Svg.Skia projects) - see below for licensing details.
-
 ## Installation
 
 ```
@@ -99,7 +97,8 @@ Note that the test project has `InternalsVisibleTo` access to the library, so so
 
 ## License
 
-The project is licensed under the Microsoft Public License (Ms-PL). see: https://en.wikipedia.org/wiki/Shared_Source_Initiative#Microsoft_Public_License_(Ms-PL)
+CodeBrix.SvgParse is licensed under the Microsoft Public License (Ms-PL) - see the
+[LICENSE](https://github.com/ellisnet/CodeBrix.SvgParse/blob/main/LICENSE) file.
 
-All code originating from Svg.Custom (part of the Svg.Skia projects) was included as required by the Microsoft Public License (Ms-PL) - as of Svg.Skia version 4.2.0.
-This project (CodeBrix.SvgParse) complies with all provisions of the source code license of Svg.Custom (Ms-PL).
+For licensing and provenance information about the open source code included in
+this package, see [THIRD-PARTY-NOTICES.txt](https://github.com/ellisnet/CodeBrix.SvgParse/blob/main/THIRD-PARTY-NOTICES.txt).

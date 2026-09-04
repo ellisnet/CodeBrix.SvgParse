@@ -43,7 +43,14 @@ REPOSITORY LAYOUT
     LICENSE                           MS-PL text.
     THIRD-PARTY-NOTICES.txt           Upstream attribution; ships in the nupkg.
     icon-codebrix-128.png             Package icon; ships in the nupkg.
-    CodeBrix.SvgParse.slnx            Solution.
+    CodeBrix.SvgParse.slnx            Solution. The Solution Items folder
+                                      carries .gitignore, AGENT-README.txt,
+                                      EXTRAS-README.txt, global.json,
+                                      icon-codebrix-128.png, LICENSE,
+                                      MAINTAINER-README.txt, README-INDEX.txt,
+                                      README.md and THIRD-PARTY-NOTICES.txt;
+                                      the Tests folder carries the test project.
+    global.json                       Selects the test runner; see TESTING.
     src/CodeBrix.SvgParse/            The library.
     src/CodeBrix.SvgParse.Generators/ Build-time source generator.
     tests/CodeBrix.SvgParse.Tests/    xUnit v3 test project.
@@ -78,6 +85,10 @@ BUILDING
     dotnet restore CodeBrix.SvgParse.slnx
     dotnet build   CodeBrix.SvgParse.slnx
 
+Requirements: the .NET 10 SDK. global.json at the repository root does NOT pin
+an SDK version, so the newest installed .NET 10 SDK is still used; it exists
+solely to select the test runner -- see TESTING.
+
 The library targets net10.0 only, with <GenerateDocumentationFile>true, so
 every public member needs an XML doc comment: CS1591 must be fixed at the
 source, never suppressed.
@@ -91,6 +102,17 @@ clean build of the generator project first.
 TESTING
 =======
     dotnet test CodeBrix.SvgParse.slnx
+
+THE TEST RUNNER IS Microsoft.Testing.Platform (MTP), selected by global.json at
+the repository root:
+
+    { "test": { "runner": "Microsoft.Testing.Platform" } }
+
+Because that setting lives in global.json rather than in the csproj, it applies
+to every `dotnet test` run anywhere in the repository, including CI. The file
+has no `sdk` section and pins no SDK version. Keep it committed -- without it
+`dotnet test` silently falls back to the older VSTest bridge. There is no
+coverage collector: the test project references no coverlet package.
 
 tests/CodeBrix.SvgParse.Tests uses xunit.v3 with
 xunit.runner.visualstudio and Microsoft.NET.Test.Sdk. There are no opt-in

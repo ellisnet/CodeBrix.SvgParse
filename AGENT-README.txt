@@ -19,7 +19,7 @@ rendering backend.
 Target framework: .NET 10 or later.
 
 Provenance: CodeBrix.SvgParse is a fork of the Svg.Custom project (part of
-the Svg.Skia projects, v4.2.0). Every namespace was renamed from "Svg" to
+the Svg.Skia projects). Every namespace was renamed from "Svg" to
 "CodeBrix.SvgParse" -- for example, upstream "Svg.Transforms" is
 "CodeBrix.SvgParse.Transforms" here. Do NOT write "using Svg;" or any other
 upstream namespace, and do not assume upstream API shapes that are not
@@ -590,11 +590,9 @@ SvgColorServer : SvgPaintServer
     percentage, and the two may be mixed. The alpha is a percentage, a 0-1
     number, or - tolerated for legacy content - a 0-255 number when it is
     greater than 1. Out-of-range values clamp; they never throw. Percentage
-    alpha matters in practice: LilyPond's SVG backend writes every color as
-    rgba(83.5294%, 36.8627%, 0.0000%, 100.0000%), and before 2026-08-25 that
-    form threw inside the converter and the element fell back to opaque
-    black - a silent wrong-color, and for rgba(...0%) an opaque box where a
-    transparent one was asked for.
+    alpha matters in practice: LilyPond's SVG backend writes every color in
+    that form - rgba(83.5294%, 36.8627%, 0.0000%, 100.0000%) - so a document
+    from it parses with its colors and its transparency intact.
 
 SvgGradientServer (abstract) : SvgPaintServer
     List<SvgGradientStop> Stops { get; }
