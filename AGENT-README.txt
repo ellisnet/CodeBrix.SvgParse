@@ -1412,7 +1412,7 @@ reference re-serializes with that reference intact.
 
 TYPE CONVERTERS AND STRING PARSING
 ----------------------------------
-Roughly forty-five TypeConverter classes back attribute parsing. You rarely
+Roughly fifty TypeConverter classes back attribute parsing. You rarely
 name them directly -- the parser uses them -- but they are public and each
 exposes the usual ConvertFrom/ConvertTo, and several expose a static Parse:
 
@@ -2039,6 +2039,10 @@ Feature-to-test-file map:
 
   Clipping, masking and filter effects
     https://github.com/ellisnet/CodeBrix.SvgParse/blob/main/tests/CodeBrix.SvgParse.Tests/SvgClippingAndFilterTests.cs
+
+  Color parsing: rgb()/rgba() with number or percentage channels and alpha,
+  the space-separated form, clamping
+    https://github.com/ellisnet/CodeBrix.SvgParse/blob/main/tests/CodeBrix.SvgParse.Tests/SvgColorConverterTests.cs
 
 To read one as plain text, swap the host for raw.githubusercontent.com:
 

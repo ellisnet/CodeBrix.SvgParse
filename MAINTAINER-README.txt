@@ -63,8 +63,8 @@ SceneGraph, Compatibility, Css, Helpers, ExtensionMethods, Exceptions,
 Resources.
 
 IMPORTANT: folder names are NOT namespaces here. Only Pathing, Transforms,
-FilterEffects, Primitives, Css, Exceptions and ExtensionMethods exist as
-sub-namespaces; everything else declares `namespace CodeBrix.SvgParse;`
+FilterEffects, Primitives, Css, Helpers, Exceptions and ExtensionMethods exist
+as sub-namespaces; everything else declares `namespace CodeBrix.SvgParse;`
 regardless of which folder it sits in. Several folders contain space
 characters in their names, so quote paths in shell commands and use
 find -print0 style loops.
