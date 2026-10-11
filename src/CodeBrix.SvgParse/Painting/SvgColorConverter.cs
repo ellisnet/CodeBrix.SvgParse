@@ -123,7 +123,9 @@ public class SvgColorConverter : TypeConverter
     /// <remarks>
     /// Accepts both the CSS Color Level 3 comma form and the CSS Color Level 4 space form
     /// (<c>rgb(r g b / a)</c>). Each channel may be a number (0-255, fractions allowed) or a
-    /// percentage; channels may mix the two. The alpha may be a percentage, a 0-1 number, or
+    /// percentage. The space form may mix the two; the comma form may not (CSS Color Level 4
+    /// legacy syntax - <c>rgba(0, 50%, 0, 0.5)</c> is invalid, as in browsers), and it may not
+    /// mix commas with the space form's <c>/</c>. The alpha may be a percentage, a 0-1 number, or
     /// (for tolerance of legacy content) a 0-255 number when it is greater than 1. Every value
     /// is clamped to its range rather than rejected, as CSS requires. Percentage alpha is what
     /// LilyPond's SVG backend writes (<c>rgba(0.0000%, 0.0000%, 0.0000%, 100.0000%)</c>), and
@@ -137,11 +139,33 @@ public class SvgColorConverter : TypeConverter
         if (open < 0 || close < open)
             return false;
 
-        string[] values = color
-            .Substring(open + 1, close - open - 1)
-            .Split(new char[] { ',', ' ', '/', '\t' }, StringSplitOptions.RemoveEmptyEntries);
+        string arguments = color.Substring(open + 1, close - open - 1);
+        bool commaForm = arguments.Contains(',');
+        string[] values;
+        if (commaForm)
+        {
+            if (arguments.Contains('/'))
+                return false;
+            values = arguments.Split(',');
+            for (int i = 0; i < values.Length; i++)
+                values[i] = values[i].Trim();
+        }
+        else
+        {
+            values = arguments.Split(new char[] { ' ', '/', '\t' }, StringSplitOptions.RemoveEmptyEntries);
+        }
         if (values.Length != 3 && values.Length != 4)
             return false;
+
+        if (commaForm)
+        {
+            bool firstIsPercent = values[0].EndsWith("%", StringComparison.InvariantCulture);
+            if (values[1].EndsWith("%", StringComparison.InvariantCulture) != firstIsPercent
+                || values[2].EndsWith("%", StringComparison.InvariantCulture) != firstIsPercent)
+            {
+                return false;
+            }
+        }
 
         if (!TryParseChannel(values[0], out int r)
             || !TryParseChannel(values[1], out int g)

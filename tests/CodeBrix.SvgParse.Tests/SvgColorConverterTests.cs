@@ -80,11 +80,27 @@ public class SvgColorConverterTests
     }
 
     [Fact]
-    public void Rgb_MixedPercentAndNumberChannels_Parse()
+    public void Rgb_SpaceForm_MixedPercentAndNumberChannels_Parse()
     {
-        var color = Parse("rgb(100%, 128, 0%)");
+        var color = Parse("rgb(100% 128 0%)");
 
         AssertArgb(color, 255, 255, 128, 0);
+    }
+
+    [Theory]
+    [InlineData("rgb(100%, 128, 0%)")]
+    [InlineData("rgba(0, 50%, 0, 0.5)")]
+    [InlineData("rgba(0, 127, 0%, 50%)")]
+    public void Rgb_CommaForm_MixedPercentAndNumberChannels_Throw(string text)
+    {
+        Assert.Throws<SvgException>(() => Parse(text));
+    }
+
+    [Fact]
+    public void Rgba_CommaForm_PercentAlphaWithNumberChannels_Parses()
+    {
+        // The alpha is not a channel: CSS Color Level 4 allows a percentage alpha either way.
+        AssertArgb(Parse("rgba(0, 127, 0, 50%)"), 128, 0, 127, 0);
     }
 
     [Fact]
@@ -108,6 +124,8 @@ public class SvgColorConverterTests
     [InlineData("rgb(1, 2, 3, 4, 5)")]
     [InlineData("rgb(a, b, c)")]
     [InlineData("rgb(1, 2, 3")]
+    [InlineData("rgb(1, 2, 3 / 0.5)")]
+    [InlineData("rgb(1, 2,, 3)")]
     public void Rgb_MalformedArgumentLists_Throw(string text)
     {
         Assert.Throws<SvgException>(() => Parse(text));

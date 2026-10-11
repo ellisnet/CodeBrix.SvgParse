@@ -587,7 +587,9 @@ SvgColorServer : SvgPaintServer
       rgb(r g b / a)                    CSS Color Level 4 space form
       hsl(h, s%, l%)
     In rgb()/rgba() each channel is a 0-255 number (fractions allowed) OR a
-    percentage, and the two may be mixed. The alpha is a percentage, a 0-1
+    percentage. The space form may mix the two; the comma form may NOT -
+    rgba(0, 50%, 0, 0.5) is invalid, as in browsers - and a comma form may
+    not use the space form's "/" either. The alpha is a percentage, a 0-1
     number, or - tolerated for legacy content - a 0-255 number when it is
     greater than 1. Out-of-range values clamp; they never throw. Percentage
     alpha matters in practice: LilyPond's SVG backend writes every color in
