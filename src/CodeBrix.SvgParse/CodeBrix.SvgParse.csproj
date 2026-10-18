@@ -82,7 +82,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="CodeBrix.StyleSheetParse.MitLicenseForever" Version="1.0.248.1122" />
+    <PackageReference Include="CodeBrix.StyleSheetParse.MitLicenseForever" Version="1.0.290.851" />
   </ItemGroup>
 
   <ItemGroup>
